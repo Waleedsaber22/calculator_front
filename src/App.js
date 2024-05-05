@@ -12,8 +12,8 @@ function App() {
         <Header />
         <div className={`flex h-[calc(100vh-50px)]`}>
           <CalculatorContextProvider>
-            <Sidebar />
             <ReactFlowProvider>
+              <Sidebar />
               <CalculatorView />
             </ReactFlowProvider>
           </CalculatorContextProvider>

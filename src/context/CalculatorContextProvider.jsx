@@ -42,8 +42,11 @@ calculator context to provide all items and it's props across calculator page
 
 */
 const CalculatorContextProvider = ({ children }) => {
+  const [nodeValues, setNodeValues] = useState({});
   return (
-    <CalculatorContext.Provider value={{ itemsData }}>
+    <CalculatorContext.Provider
+      value={{ itemsData, nodeValues, setNodeValues }}
+    >
       {children}
     </CalculatorContext.Provider>
   );

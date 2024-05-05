@@ -65,10 +65,10 @@ const connectionLineStyle = {
 /* ================================================= end ================================================ */
 const CalculatorView = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [nodeValues, setNodeValues] = useState({});
+  // const [nodeValues, setNodeValues] = useState({});
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const { itemsData } = useCalculatorContext();
+  const { itemsData, nodeValues, setNodeValues } = useCalculatorContext();
 
   /*
   =======================================================================================
@@ -260,7 +260,7 @@ const CalculatorView = () => {
 
     edgeUpdateSuccessful.current = true;
   }, []);
-  const { getNodes, getEdges } = useReactFlow();
+  const { getNodes, getEdges, zoomOut } = useReactFlow();
   const isValidConnection = useCallback(
     (connection) => {
       // we are using getNodes and getEdges helpers here

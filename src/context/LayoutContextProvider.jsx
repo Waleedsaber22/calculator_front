@@ -12,7 +12,7 @@ layout context to control visibility of sidebar
       value={{
         showSidebar,
         setShowSidebar,
-        sidebarWidth: showSidebar ? "300px" : "10px",
+        sidebarWidth: showSidebar ? "w-[200px] sm:w-[300px]" : "w-[10px]",
         sidebarClassName: "transition-all duration-500",
       }}
     >

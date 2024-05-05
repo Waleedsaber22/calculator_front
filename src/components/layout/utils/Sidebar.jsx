@@ -7,11 +7,8 @@ const Sidebar = () => {
     useLayoutContext();
   return (
     <div
-      style={{
-        width: showSidebar ? "300px" : "0px",
-      }}
       className={`shrink-0 overflow-auto overflow-x-clip h-full ${sidebarClassName} ${
-        showSidebar ? "" : ""
+        showSidebar ? sidebarWidth : "w-0"
       } bg-gray-900`}
     >
       <CalculatorComponents />

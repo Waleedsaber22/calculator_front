@@ -9,10 +9,9 @@ const Header = () => {
   return (
     <div className="flex justify-between items-center bg-white h-[50px]">
       <div
-        style={{
-          width: showSidebar ? "300px" : "45px",
-        }}
-        className={`${sidebarClassName} flex items-center justify-between bg-gray-100 rounded-lg p-2`}
+        className={`${
+          showSidebar ? sidebarWidth : "w-[45px]"
+        } ${sidebarClassName} flex items-center justify-between bg-gray-100 rounded-lg p-2`}
       >
         <Avatar
           src={"/icon.svg"}
