@@ -1,8 +1,7 @@
 import React from "react";
 import { useCalculatorContext } from "../../../context/CalculatorContextProvider";
 import { useReactFlow } from "reactflow";
-import { InputNumber } from "antd";
-import evalGraph from "./calculate";
+
 /*
 ========================================
 active drag on each item
@@ -18,9 +17,8 @@ components to render all calc items
 
 */
 const CalculatorNodes = () => {
-  const { nodesData, setNodeValues, nodeValues, createNewNode } =
-    useCalculatorContext();
-  const { setNodes, getEdges, getNodes, zoomOut } = useReactFlow();
+  const { nodesData, nodeValues, createNewNode } = useCalculatorContext();
+  const { setNodes } = useReactFlow();
 
   return (
     <div className="text-gray-100 flex flex-col py-4">
@@ -48,7 +46,7 @@ const CalculatorNodes = () => {
                 key,
                 label,
                 icon,
-                value: nodeValues?.id,
+                value: nodeValues?.[id],
                 position,
               });
               return [...nodes, newNode];

@@ -35,6 +35,7 @@ const initialEdges = [];
 /*
 ========================================================================================================
 custom connection lines during drag action
+
 */
 function CustomConnectionLine({ fromX, fromY, toX, toY, connectionLineStyle }) {
   const [edgePath] = getStraightPath({
@@ -194,7 +195,11 @@ const CalculatorView = () => {
       );
     });
   }, [nodeValues]);
-  /* ================================================= end ================================================ */
+
+  /* ================================================================ 
+  handle removing edges if we want it by focusing at the edge connections 
+  
+  */
 
   const edgeUpdateSuccessful = useRef(true);
   const onEdgeUpdateStart = useCallback(() => {
@@ -212,7 +217,12 @@ const CalculatorView = () => {
 
     edgeUpdateSuccessful.current = true;
   }, []);
+
   const { getNodes, getEdges, zoomOut } = useReactFlow();
+  /* ================================================================ 
+  resticting only valid connections for users 
+  
+  */
   const isValidConnection = useCallback(
     (connection) => {
       // we are using getNodes and getEdges helpers here
@@ -253,12 +263,16 @@ const CalculatorView = () => {
     [getNodes, getEdges]
   );
 
+  /* =====================================================
+  re-evalute our flow when we add/update any connection between nodes
+
+  */
+
   const onConnect = useCallback(
     (params) => {
       setEdges((eds) => {
         const nodes = getNodes();
         const newEdges = addEdge(params, eds);
-        const allEdges = getEdges();
         const outputValues = evalGraph(nodes, newEdges);
         setNodeValues(() => ({ ...nodeValues, ...(outputValues || {}) }));
         return newEdges;
