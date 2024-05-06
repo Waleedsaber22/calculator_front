@@ -337,7 +337,16 @@ function getConnectedGraphs(nodes, edges) {
       const graphEdges = []; // Edges in the current graph
       const exploredEdges = new Set(); // Set to track explored edges
       dfs(node.id, graphNodes, graphEdges, exploredEdges); // Traverse connected nodes starting from the current node
-      connectedGraphs.push({ nodes: graphNodes, edges: graphEdges }); // Add the current graph to the list of connected graphs
+      const reorderedGraphEdges = [];
+      edges.forEach((edge) => {
+        const { source, target } = edge || {};
+        const isExit = graphEdges?.some(
+          ({ source: sourceGraph, target: targetGraph }) =>
+            sourceGraph == source && targetGraph == target
+        );
+        if (isExit) reorderedGraphEdges.push(edge);
+      });
+      connectedGraphs.push({ nodes: graphNodes, edges: reorderedGraphEdges }); // Add the current graph to the list of connected graphs
     }
   });
 
