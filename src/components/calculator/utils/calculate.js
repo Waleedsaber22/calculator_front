@@ -539,7 +539,10 @@ function calculateOutputValues(nodes, edges) {
         check_circle.push(nodeId);
         return deps[nodeId]
           ? deps[nodeId]
-              ?.map((dep) => nodeValues[dep] || handleDependency(deps, dep))
+              ?.map(
+                (dep) => nodeValues[dep]
+                // || handleDependency(deps, dep)
+              )
               ?.flat()
           : [];
       };
@@ -573,6 +576,7 @@ function calculateOutputValues(nodes, edges) {
               : dependenciesValues.reduce((acc, val) => acc / val);
           break;
         default:
+          nodeValues[nodeId] = dependenciesValues?.[0] ?? undefined;
           break;
       }
     }
