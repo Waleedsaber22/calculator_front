@@ -11,7 +11,7 @@ import { MdAdd, MdInput, MdOutput } from "react-icons/md";
 import { RiSubtractFill } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { useReactFlow } from "reactflow";
-import evalGraph from "../components/calculator/utils/calculate";
+import evalGraph from "../components/calculator/actions/calculate";
 const CalculatorContext = createContext(null);
 const nodesData = [
   {

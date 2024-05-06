@@ -24,7 +24,7 @@ import { useCalculatorContext } from "../../context/CalculatorContextProvider";
 import { Input, InputNumber } from "antd";
 import CustomNode from "./utils/CustomNode";
 import FloatingEdge from "./utils/FloatingEdge";
-import evalGraph from "./utils/calculate";
+import evalGraph from "./actions/calculate";
 import { IoReload } from "react-icons/io5";
 import { FcPrevious } from "react-icons/fc";
 import { BiSkipPrevious } from "react-icons/bi";
