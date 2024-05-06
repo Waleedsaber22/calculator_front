@@ -530,7 +530,7 @@ function calculateOutputValues(nodes, edges) {
   // Process nodes in sorted order to calculate values
   sortedNodes.forEach((nodeId) => {
     const node = nodes.find((n) => n.id === nodeId);
-    if (node.value !== undefined) {
+    if (node.value != undefined && nodeId?.split("_")?.[0] == "in") {
       nodeValues[nodeId] = node.value; // Input node
     } else {
       const check_circle = [];
@@ -585,10 +585,20 @@ function calculateOutputValues(nodes, edges) {
 
   // Return output node values
   const outputValues = {};
-  Object.keys(dependencies).map((k) => {
-    if (k?.split("_")?.[0] == "out") {
-      outputValues[k] = nodeValues[dependencies[k]?.[0]] ?? undefined;
-    }
+  // Object.keys(dependencies).map((k) => {
+  //   if (k?.split("_")?.[0] == "out") {
+  //     console.log(
+  //       "wa_test_key",
+  //       k,
+  //       nodeValues[dependencies[k]?.[0]],
+  //       nodeValues
+  //     );
+  //     outputValues[k] = nodeValues[dependencies[k]?.[0]] ?? undefined;
+  //   }
+  // });
+  sortedNodes?.map((nodeId) => {
+    if (nodeId?.split("_")?.[0] == "out")
+      outputValues[nodeId] = nodeValues[nodeId];
   });
   return outputValues;
 }
