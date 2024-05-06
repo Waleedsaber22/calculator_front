@@ -63,12 +63,13 @@ const connectionLineStyle = {
   stroke: "black",
 };
 /* ================================================= end ================================================ */
+
 const CalculatorView = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  // const [nodeValues, setNodeValues] = useState({});
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const { itemsData, nodeValues, setNodeValues } = useCalculatorContext();
+  const { nodesData, nodeValues, setNodeValues, createNewNode } =
+    useCalculatorContext();
 
   /*
   =======================================================================================
@@ -87,7 +88,6 @@ const CalculatorView = () => {
     }),
     [FloatingEdge]
   );
-  /* ================================================= end ================================================ */
 
   /*
   =======================================================================================
@@ -112,73 +112,25 @@ const CalculatorView = () => {
         x: e.clientX,
         y: e.clientY,
       });
-      const itemData = itemsData?.find(({ key: itemKey }) => itemKey == key);
-      const { label, icon } = itemData || {};
+      const nodeData = nodesData?.find(({ key: itemKey }) => itemKey == key);
+      const { label, icon } = nodeData || {};
       setNodes((nodes) => {
         const id = `${key}_${
           nodes?.filter(({ id }) => id?.split("_")[0] == key)?.length + 1
         }`;
-        const newNode = {
+        const newNode = createNewNode({
           id,
           key,
-          type: "custom",
-          style: { padding: "0px" },
-          position,
           label,
           icon,
+          position,
           value: nodeValues?.[id],
-          data: {
-            label: (
-              <div className="flex flex-col items-center justify-center">
-                <div
-                  className={`text-white flex gap-2 items-center justify-center
-                 w-full p-2 rounded-t-lg ${
-                   key == "in"
-                     ? "bg-yellow-700"
-                     : key == "out"
-                     ? "bg-blue-700"
-                     : "bg-red-700"
-                 }`}
-                >
-                  <div>{label}</div>
-                  <div>{icon}</div>
-                </div>
-                {["out", "in"].includes(key) ? (
-                  <InputNumber
-                    name={id}
-                    value={nodeValues?.[id]}
-                    disabled={key == "out"}
-                    onChange={(val) => {
-                      const outputValues = evalGraph(
-                        getNodes()?.map((n) =>
-                          n?.id == id ? { ...n, value: val } : n
-                        ),
-                        getEdges()
-                      );
-                      setNodeValues((nV) => ({
-                        ...nV,
-                        [id]: val,
-                        ...(outputValues || {}),
-                      }));
-                    }}
-                    placeholder={label}
-                    className={`!rounded-none !w-full ${
-                      key == "out" ? "!text-gray-800 !text-center" : ""
-                    }`}
-                  />
-                ) : key == "out" ? (
-                  <div>Connect it</div>
-                ) : null}
-              </div>
-            ),
-          },
-        };
+        });
         return [...nodes, newNode];
       });
     },
     [reactFlowInstance, nodeValues]
   );
-  /* ================================================= end ================================================ */
 
   /*
   ========================================================================================================
@@ -228,11 +180,11 @@ const CalculatorView = () => {
                         }}
                         placeholder={n?.label}
                         className={`!rounded-none !w-full ${
-                          n?.key == "out" ? "!text-gray-800 !text-center" : ""
+                          n?.key == "out"
+                            ? "allow-cursor-output !cursor-auto !text-gray-800 !text-center"
+                            : ""
                         }`}
                       />
-                    ) : n?.key == "out" ? (
-                      <div>Connect it</div>
                     ) : null}
                   </div>
                 ),
@@ -304,17 +256,14 @@ const CalculatorView = () => {
   const onConnect = useCallback(
     (params) => {
       setEdges((eds) => {
-        if (isValidConnection(params, eds)) {
-          const nodes = getNodes();
-          const newEdges = addEdge(params, eds);
-          const outputValues = evalGraph(nodes, newEdges);
-          setNodeValues(() => ({ ...nodeValues, ...(outputValues || {}) }));
-          return newEdges;
-        }
-        return eds;
+        const nodes = getNodes();
+        const newEdges = addEdge(params, eds);
+        const allEdges = getEdges();
+        const outputValues = evalGraph(nodes, newEdges);
+        setNodeValues(() => ({ ...nodeValues, ...(outputValues || {}) }));
+        return newEdges;
       });
     },
-
     [setEdges, nodeValues]
   );
   return (

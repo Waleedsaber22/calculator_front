@@ -9,14 +9,16 @@ function App() {
   return (
     <div className="App">
       <Layout>
-        <Header />
+        <div className="h-[50px]">
+          <Header />
+        </div>
         <div className={`flex h-[calc(100vh-50px)]`}>
-          <CalculatorContextProvider>
-            <ReactFlowProvider>
+          <ReactFlowProvider>
+            <CalculatorContextProvider>
               <Sidebar />
               <CalculatorView />
-            </ReactFlowProvider>
-          </CalculatorContextProvider>
+            </CalculatorContextProvider>
+          </ReactFlowProvider>
         </div>
       </Layout>
     </div>

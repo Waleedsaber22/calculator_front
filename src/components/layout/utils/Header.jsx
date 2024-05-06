@@ -7,7 +7,7 @@ const Header = () => {
   const { showSidebar, setShowSidebar, sidebarWidth, sidebarClassName } =
     useLayoutContext();
   return (
-    <div className="flex justify-between items-center bg-white h-[50px]">
+    <div className="flex justify-between items-center bg-white h-full">
       <div
         className={`${
           showSidebar ? sidebarWidth : "w-[45px]"

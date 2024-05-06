@@ -1,5 +1,5 @@
 import React from "react";
-import CalculatorComponents from "../../calculator/utils/CalculatorComponents";
+import CalculatorNodes from "../../calculator/utils/CalculatorNodes";
 import { useLayoutContext } from "../../../context/LayoutContextProvider";
 
 const Sidebar = () => {
@@ -11,7 +11,7 @@ const Sidebar = () => {
         showSidebar ? sidebarWidth : "w-0"
       } bg-gray-900`}
     >
-      <CalculatorComponents />
+      <CalculatorNodes />
     </div>
   );
 };

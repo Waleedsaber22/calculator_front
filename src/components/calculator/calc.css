@@ -15,3 +15,6 @@ div.customHandle {
   border: none;
   opacity: 0;
 }
+.allow-cursor-output input {
+  cursor: auto !important;
+}

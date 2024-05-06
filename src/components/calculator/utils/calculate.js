@@ -262,12 +262,49 @@ const nodes = [
 ];
 const edges = [{ source: "in_1", target: "out_1" }];
 
+// function getConnectedGraphs(nodes, edges) {
+//   const visited = new Set(); // Set to track visited nodes
+//   const connectedGraphs = []; // Array to store connected graphs
+
+//   // Depth-first search (DFS) function to traverse connected nodes
+//   function dfs(nodeId, graphNodes, graphEdges) {
+//     visited.add(nodeId); // Mark the current node as visited
+//     graphNodes.push(nodes.find((node) => node.id === nodeId)); // Add node to the current graph
+
+//     // Find edges connected to the current node
+//     const connectedEdges = edges.filter(
+//       (edge) => edge.source === nodeId || edge.target === nodeId
+//     );
+
+//     // Iterate over connected edges
+//     connectedEdges.forEach((edge) => {
+//       // Check if the other end of the edge is not visited
+//       const nextNodeId = edge.source === nodeId ? edge.target : edge.source;
+//       if (!visited.has(nextNodeId)) {
+//         graphEdges.push(edge); // Add edge to the current graph
+//         dfs(nextNodeId, graphNodes, graphEdges); // Recursively traverse connected nodes
+//       }
+//     });
+//   }
+
+//   // Iterate over nodes to find connected subgraphs
+//   nodes.forEach((node) => {
+//     if (!visited.has(node.id)) {
+//       const graphNodes = []; // Nodes in the current graph
+//       const graphEdges = []; // Edges in the current graph
+//       dfs(node.id, graphNodes, graphEdges); // Traverse connected nodes starting from the current node
+//       connectedGraphs.push({ nodes: graphNodes, edges: graphEdges }); // Add the current graph to the list of connected graphs
+//     }
+//   });
+
+//   return connectedGraphs;
+// }
 function getConnectedGraphs(nodes, edges) {
   const visited = new Set(); // Set to track visited nodes
   const connectedGraphs = []; // Array to store connected graphs
 
   // Depth-first search (DFS) function to traverse connected nodes
-  function dfs(nodeId, graphNodes, graphEdges) {
+  function dfs(nodeId, graphNodes, graphEdges, exploredEdges) {
     visited.add(nodeId); // Mark the current node as visited
     graphNodes.push(nodes.find((node) => node.id === nodeId)); // Add node to the current graph
 
@@ -278,11 +315,17 @@ function getConnectedGraphs(nodes, edges) {
 
     // Iterate over connected edges
     connectedEdges.forEach((edge) => {
-      // Check if the other end of the edge is not visited
-      const nextNodeId = edge.source === nodeId ? edge.target : edge.source;
-      if (!visited.has(nextNodeId)) {
+      // Check if the edge has not been explored yet
+      if (!exploredEdges.has(JSON.stringify(edge))) {
+        // Mark the edge as explored
+        exploredEdges.add(JSON.stringify(edge));
         graphEdges.push(edge); // Add edge to the current graph
-        dfs(nextNodeId, graphNodes, graphEdges); // Recursively traverse connected nodes
+
+        // Check if the other end of the edge is not visited
+        const nextNodeId = edge.source === nodeId ? edge.target : edge.source;
+        if (!visited.has(nextNodeId)) {
+          dfs(nextNodeId, graphNodes, graphEdges, exploredEdges); // Recursively traverse connected nodes
+        }
       }
     });
   }
@@ -292,7 +335,8 @@ function getConnectedGraphs(nodes, edges) {
     if (!visited.has(node.id)) {
       const graphNodes = []; // Nodes in the current graph
       const graphEdges = []; // Edges in the current graph
-      dfs(node.id, graphNodes, graphEdges); // Traverse connected nodes starting from the current node
+      const exploredEdges = new Set(); // Set to track explored edges
+      dfs(node.id, graphNodes, graphEdges, exploredEdges); // Traverse connected nodes starting from the current node
       connectedGraphs.push({ nodes: graphNodes, edges: graphEdges }); // Add the current graph to the list of connected graphs
     }
   });
@@ -457,8 +501,12 @@ function calculateOutputValues(nodes, edges) {
     }
     dependencies[edge.target].push(edge.source);
   });
+  // console.log("wa_chk_1", dependencies, edges);
 
-  // Topological sorting function
+  /*
+    Topological sorting function
+  used to order our nodes in from roots in proper way so nodes values can be resolved
+    */
   function topologicalSort(node, visited, stack) {
     visited[node] = true;
     if (dependencies[node]) {
@@ -496,19 +544,21 @@ function calculateOutputValues(nodes, edges) {
           : [];
       };
       const dependenciesValues = handleDependency(dependencies, nodeId);
+      // if (nodeId?.split("_")?.[0] == "div")
+      //   console.log("wa_chk", dependenciesValues, dependencies[nodeId]);
       const operation = nodeId.split("_")[0]; // Extract operation type from node id
       switch (operation) {
         case "add":
-          nodeValues[nodeId] = dependenciesValues.reduce(
-            (acc, val) => acc + val,
-            0
-          );
+          nodeValues[nodeId] =
+            dependenciesValues?.length <= 1
+              ? dependenciesValues?.[0]
+              : dependenciesValues.reduce((acc, val) => acc + val, 0);
           break;
         case "mul":
-          nodeValues[nodeId] = dependenciesValues.reduce(
-            (acc, val) => acc * val,
-            1
-          );
+          nodeValues[nodeId] =
+            dependenciesValues?.length <= 1
+              ? dependenciesValues?.[0]
+              : dependenciesValues.reduce((acc, val) => acc * val, 1);
           break;
         case "sub":
           nodeValues[nodeId] =
@@ -530,14 +580,6 @@ function calculateOutputValues(nodes, edges) {
 
   // Return output node values
   const outputValues = {};
-  //   nodes
-  //     .filter(
-  //       (node) => nodeValues[node.id] !== undefined && !isNaN(nodeValues[node.id])
-  //     )
-  //     .map((node) => {
-  //       console.log(node?.id, "go");
-  //       // outputValues[node?.id] = nodeValues[node.id];
-  //     });
   Object.keys(dependencies).map((k) => {
     if (k?.split("_")?.[0] == "out") {
       outputValues[k] = nodeValues[dependencies[k]?.[0]] ?? undefined;
@@ -548,7 +590,7 @@ function calculateOutputValues(nodes, edges) {
 
 const evalGraph = (nodes, edges) => {
   let outputValues = {};
-
+  const mainEdge = edges;
   getConnectedGraphs(nodes, edges)?.map(({ nodes, edges }) => {
     outputValues = {
       ...outputValues,
