@@ -235,7 +235,7 @@ const CalculatorView = () => {
       const sourceKey = connection?.source?.split("_")[0];
       const targetKey = connection?.target?.split("_")[0];
       if (
-        (sourceKey == targetKey && ["in", "out"].includes(sourceKey)) ||
+        (sourceKey == targetKey && ["in"].includes(sourceKey)) ||
         (targetKey == "out" &&
           edges?.some(({ target }) => target == connection?.target)) ||
         targetKey == "in" ||

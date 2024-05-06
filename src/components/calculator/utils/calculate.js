@@ -544,6 +544,7 @@ function calculateOutputValues(nodes, edges) {
                 // || handleDependency(deps, dep)
               )
               ?.flat()
+              ?.filter((val) => val != undefined)
           : [];
       };
       const dependenciesValues = handleDependency(dependencies, nodeId);
